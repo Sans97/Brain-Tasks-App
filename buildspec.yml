@@ -5,6 +5,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 951032399492.dkr.ecr.ap-south-1.amazonaws.com
+      - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
   build:
     commands:
       - echo Building Docker image...
@@ -14,4 +15,6 @@ phases:
     commands:
       - echo Pushing image to ECR...
       - docker push 951032399492.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-      - echo Done!
+      - echo Deploying to EKS...
+      - kubectl apply -f deployment.yaml
+      - kubectl rollout restart deployment/brain-tasks-deployment
